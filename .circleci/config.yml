@@ -1,14 +1,19 @@
 version: 2.1
 
 jobs:
-  build:
+  test:
     docker:
       - image: cimg/node:18.12.1
     steps:
       - checkout
-      - run: node --version
+      - run:
+          name: 'Install packages'
+          command: yarn install
+      - run:
+          name: 'Run tests'
+          command: yarn test
 
 workflows:
-  test:
+  test-build:
     jobs:
-      - build
+      - test
