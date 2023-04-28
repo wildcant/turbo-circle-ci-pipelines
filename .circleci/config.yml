@@ -20,6 +20,7 @@ jobs:
     docker:
       - image: cimg/node:17.1.0
     steps:
+      - checkout
       - run:
           name: 'Echo turbo dry json'
           command: yarn diff
