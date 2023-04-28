@@ -3,20 +3,28 @@ version: 2.1
 jobs:
   build-test:
     docker:
-      - image: cimg/node:18.12.1
+      - image: cimg/node:17.1.0
     steps:
       - checkout
       - run:
-          name: 'Install packages'
+          name: Install packages
           command: yarn install
       - run:
-          name: 'Build'
+          name: Build
           command: yarn build
       - run:
-          name: 'Run tests'
+          name: Run tests
           command: yarn test
+
+  print-main-diff:
+    - run:
+        name: Echo turbo dry json
+        command: yarn diff
 
 workflows:
   ci:
     jobs:
       - build-test
+      - print-main-diff:
+          requires:
+            - build-test

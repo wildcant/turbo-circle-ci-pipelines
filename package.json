@@ -1,4 +1,5 @@
 {
+  "name": "turbo-circle-ci-pipelines",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -6,7 +7,8 @@
     "dev": "turbo run dev --no-cache  --continue",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "turbo run lint",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "diff": "turbo run build --filter=...[origin/main] --dry-run=json"
   },
   "devDependencies": {
     "prettier": "^2.7.1",
