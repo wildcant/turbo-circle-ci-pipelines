@@ -1,5 +1,11 @@
 version: 2.1
 
+executors:
+  basic:
+    docker:
+      - image: cimg/base:current
+    resource_class: small
+
 jobs:
   build-test:
     docker:
@@ -31,33 +37,38 @@ jobs:
           name: Run script
           command: ./.circleci/scripts/turbo-changed.sh
 
-  shared:
-    docker:
-      - image: cimg/node:17.1.0
+  create-env-var:
+    executor: basic
     steps:
-      - run:
-          name: Set environment variable
-          command: export MY_VAR="new_value"
-
-      - run:
-          name: Echo env var
-          command: echo $MY_VAR
-
-  job1:
-    docker:
-      - image: cimg/node:17.1.0
+      - run: |
+          echo "export FOO=BAR" >> $BASH_ENV
+      - run: |
+          # verify; optional step
+          printenv FOO
+      - run: |
+          cp $BASH_ENV bash.env
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bash.env
+  load-env-var:
+    executor: basic
     steps:
-      - run:
-          name: Use environment variable
-          command: echo $MY_VAR
+      - attach_workspace:
+          at: .
+      - run: |
+          cat bash.env >> $BASH_ENV
+      - run: |
+          # verify; this should print 'BAR'
+          printenv FOO
 
 workflows:
   # ci:
   #   jobs:
   #     - playground
-  my-workflow:
+  main:
     jobs:
-      - shared
-      - job1:
+      - create-env-var
+      - load-env-var:
           requires:
-            - shared
+            - create-env-var
