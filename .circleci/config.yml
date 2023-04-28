@@ -15,12 +15,6 @@ jobs:
       - run:
           name: Run tests
           command: yarn test
-
-  print-main-diff:
-    docker:
-      - image: cimg/node:17.1.0
-    steps:
-      - checkout
       - run:
           name: 'Echo turbo dry json'
           command: yarn diff
@@ -29,6 +23,3 @@ workflows:
   ci:
     jobs:
       - build-test
-      - print-main-diff:
-          requires:
-            - build-test
