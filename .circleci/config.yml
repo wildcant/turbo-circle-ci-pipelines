@@ -40,11 +40,14 @@ jobs:
           command: ./.circleci/scripts/turbo-changed.sh
 
   create-env-var:
-    executor: basic
+    executor: node
     steps:
       - checkout
+      - run:
+          name: Install packages
+          command: yarn install
       - run: |
-          ./.circleci/scripts/echo-env.sh >> $BASH_ENV
+          ./.circleci/scripts/turbo-changed.sh >> $BASH_ENV
       - run: |
           # verify; optional step
           printenv FOO
@@ -55,7 +58,7 @@ jobs:
           paths:
             - bash.env
   load-env-var:
-    executor: basic
+    executor: node
     steps:
       - attach_workspace:
           at: .

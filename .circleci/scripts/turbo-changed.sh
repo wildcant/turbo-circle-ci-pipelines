@@ -8,14 +8,29 @@ TURBO_RUN_FILTER=...[origin/main]
 json="$(echo `yarn build --filter=$TURBO_RUN_FILTER --dry-run=json` | grep -o '{.*}')"
 
 # Extract the packages that changed.
-packages=($(echo "$json" | grep -o '"packages": \[[^]]*\]' | sed 's/"packages": \[\([^]]*\)\]/\1/' | tr -d '",[]' | tr ' ' '\n'))
-echo "Packages that require deployment: (${packages[@]})"
+packages="$(echo "$json" | grep -o '"packages": \[[^]]*\]' | sed 's/"packages": \[\([^]]*\)\]/\1/' | tr -d '",[]')"
+# packages=($(echo "$json" | grep -o '"packages": \[[^]]*\]' | sed 's/"packages": \[\([^]]*\)\]/\1/' | tr -d '",[]' | tr ' ' '\n'))
+# packages=($packages_str)
+# echo $packages
+
+# echo "Packages that require deployment: (${packages[@]})"
 
 # Check if the given packages is in the list of packages that changed.
-if [[ " ${packages[*]} " =~ " ${PROJECT} " ]]; then
-  packageChanged=true
-else
-  packageChanged=false
-fi
+# if [[ " ${packages[*]} " =~ " ${PROJECT} " ]]; then
+#   packageChanged=true
+# else
+#   packageChanged=false
+# fi
+# echo "Project \"${PROJECT}\" requires deployment? ${packageChanged}"
 
-echo "Project \"${PROJECT}\" requires deployment? ${packageChanged}"
+echo "export FOO=$packages"
+
+
+# temp=$FOO
+# echo "${temp[@]}"
+# temp2="sample"
+# if [[ " ${temp[*]} " =~ " ${temp2} " ]]; then
+#   echo yes
+# else
+#   echo no
+# fi
