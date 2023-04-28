@@ -67,6 +67,13 @@ jobs:
       - run: |
           # verify; this should print 'BAR'
           printenv FOO
+          echo "${FOO[@]}"
+          temp2="sample"
+          if [[ " ${temp[*]} " =~ " ${temp2} " ]]; then
+            echo yes
+          else
+            echo no
+          fi
 
 workflows:
   # ci:
