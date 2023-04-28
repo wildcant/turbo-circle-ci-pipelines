@@ -43,11 +43,11 @@ jobs:
     executor: node
     steps:
       - checkout
-      - run:
-          name: Install packages
-          command: yarn install
+      # - run:
+      #     name: Install packages
+      #     command: yarn install
       - run: |
-          ./.circleci/scripts/turbo-changed.sh >> $BASH_ENV
+          ./.circleci/scripts/echo-env.sh >> $BASH_ENV
       - run: |
           # verify; optional step
           printenv FOO
