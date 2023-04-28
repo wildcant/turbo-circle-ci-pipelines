@@ -31,7 +31,30 @@ jobs:
           name: Run script
           command: ./.circleci/scripts/turbo-changed.sh
 
+  conditional-job:
+    docker:
+      - image: alpine
+    steps:
+      - run: echo "Running conditional job"
+
+  generate-output-job:
+    docker:
+      - image: alpine
+    steps:
+      - run: echo "Some output" > output.txt
+      - store_artifacts:
+          path: output.txt
+
 workflows:
-  ci:
+  # ci:
+  #   jobs:
+  #     - playground
+  generate-output:
     jobs:
-      - playground
+      - generate-output-job
+  conditional-workflow:
+    when: << dependencies.generate-output.outputs.output-txt contains "Some output" >>
+    dependencies:
+      - generate-output
+    jobs:
+      - conditional-job

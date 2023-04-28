@@ -4,7 +4,7 @@ DIR="$(cd "$(dirname "$1")" && pwd)"
 PROJECT="admin"
 TURBO_RUN_FILTER=...[origin/main]
 
-# Extract json from dry response from dry command.
+# Extract json from response of dry command.
 json="$(echo `yarn build --filter=$TURBO_RUN_FILTER --dry-run=json` | grep -o '{.*}')"
 
 # Extract the packages that changed.
