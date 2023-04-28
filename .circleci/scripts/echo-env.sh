@@ -1,1 +1,1 @@
-echo "export FOO=// admin blog storefront ui"
+echo "export FOO=\"// admin blog storefront ui\""
