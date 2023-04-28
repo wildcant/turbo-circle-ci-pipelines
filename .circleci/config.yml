@@ -26,7 +26,7 @@ jobs:
       - checkout
       - run:
           name: Run script
-          command: ./.circleci/scripts/changeset.sh
+          command: ./.circleci/scripts/turbo-changed.sh
 
 workflows:
   ci:
