@@ -21,9 +21,12 @@ jobs:
 
   playground:
     docker:
-      - image: cimg/base:current
+      - image: cimg/node:17.1.0
     steps:
       - checkout
+      - run:
+          name: Install packages
+          command: yarn install
       - run:
           name: Run script
           command: ./.circleci/scripts/turbo-changed.sh
