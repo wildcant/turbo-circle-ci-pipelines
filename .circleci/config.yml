@@ -5,11 +5,14 @@ executors:
     docker:
       - image: cimg/base:current
     resource_class: small
+  node:
+    docker:
+      - image: cimg/node:17.1.0
+    resource_class: small
 
 jobs:
   build-test:
-    docker:
-      - image: cimg/node:17.1.0
+    executor: node
     steps:
       - checkout
       - run:
@@ -26,8 +29,7 @@ jobs:
           command: yarn test
 
   playground:
-    docker:
-      - image: cimg/node:17.1.0
+    executor: node
     steps:
       - checkout
       - run:
@@ -41,7 +43,7 @@ jobs:
     executor: basic
     steps:
       - run: |
-          echo "export FOO=BAR" >> $BASH_ENV
+          ./.circleci/scripts/turbo-changed.sh >> $BASH_ENV
       - run: |
           # verify; optional step
           printenv FOO
