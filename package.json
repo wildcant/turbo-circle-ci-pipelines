@@ -1,5 +1,5 @@
 {
-  "name": "turbo-circle-ci-pipelines",
+  "name": "turbo-deployment-pipelines",
   "private": true,
   "scripts": {
     "build": "turbo run build",
