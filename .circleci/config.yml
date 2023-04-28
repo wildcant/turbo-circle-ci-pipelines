@@ -37,14 +37,15 @@ jobs:
     steps:
       - run:
           name: Set environment variable
-          command: echo "FOO=bar" >> $BASH_ENV
+          command: export MY_VAR=new_value
+
   job1:
     docker:
       - image: cimg/node:17.1.0
     steps:
       - run:
           name: Use environment variable
-          command: echo $FOO
+          command: echo $MY_VAR
 
 workflows:
   # ci:
