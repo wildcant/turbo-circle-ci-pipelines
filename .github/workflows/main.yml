@@ -1,12 +1,86 @@
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
-  trigger-circleci:
+  checks:
+    name: Define which apps have changed and require a new deployment.
     runs-on: ubuntu-latest
+    outputs:
+      changed-api: ${{ steps.changed-app.outputs.result }}
+      changed-web: ${{ steps.changed-docs.outputs.result }}
     steps:
-      - name: CircleCI Trigger on Pull Request
-        id: deploy
-        uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0
-        env:
-          CCI_TOKEN: ${{ secrets.CCI_TOKEN }}
+      - uses: actions/checkout@v3
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          chace: 'yarn'
+          cache-dependency-path: 'yarn.lock'
+
+      - name: 📦 Install dependencies
+        if: steps.node-modules-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: yarn install --immutable
+
+      - name: Changeset
+        id: changeset
+        # 1. We need the 'output' of a turbo dry-run to get a json with all affected packages of these run.
+        # 2. The multi line json string is transformed to a single line string.
+        # 3. The single line json string is set to an 'output' (or result) of this step.
+        run: |
+          content=`yarn build --filter=$TURBO_RUN_FILTER --dry-run=json`
+          # the following lines are required for multi line json
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          echo "::set-output name=result::$content"
+
+      - name: Changed api?
+        id: changed-api
+        # 1. Using the 'output' of the 'changeset' step inside the `if` to check if the specific app has changed
+        # 2. When `true`, we store it in the 'output' of the current step.
+        if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, 'api') }}
+        run: |
+          echo "::set-output name=result::true"
+
+      - name: Changed web?
+        id: changed-web
+        # 1. Using the 'output' of the 'changeset' step inside the `if` to check if the specific app has changed
+        # 2. When `true`, we store it in the 'output' of the current step.
+        if: ${{ contains(fromJSON(steps.changeset.outputs.result).packages, 'web') }}
+        run: |
+          echo "::set-output name=result::true"
+
+  deploy-web:
+    runs-on: ubuntu-latest
+    name: Deploy web
+    needs: [checks]
+    if: ${{ needs.checks.outputs.changed-web }}
+    steps:
+      - name: Trigger web deployment
+        id: deploy-web
+        run: echo Deploying web
+
+  deploy-api:
+    runs-on: ubuntu-latest
+    name: Deploy api
+    needs: [checks]
+    if: ${{ needs.checks.outputs.changed-api }}
+    steps:
+      - name: Trigger api deployment
+        id: deploy-api
+        run: echo Deploying api
+
+  # trigger-circleci:
+  #   runs-on: ubuntu-latest
+  #   name: Deploy web
+  #   needs: [checks]
+  #   if: ${{ needs.checks.outputs.changed-web }}
+  #   steps:
+  #     - name: CircleCI Trigger on Pull Request
+  #       id: deploy
+  #       uses: CircleCI-Public/trigger-circleci-pipeline-action@v1.0
+  #       env:
+  #         CCI_TOKEN: ${{ secrets.CCI_TOKEN }}
