@@ -1,0 +1,1 @@
+echo "export FOO=BAR"
