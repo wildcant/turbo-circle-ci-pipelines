@@ -42,6 +42,7 @@ jobs:
   create-env-var:
     executor: basic
     steps:
+      - checkout
       - run: |
           ./.circleci/scripts/turbo-changed.sh >> $BASH_ENV
       - run: |
