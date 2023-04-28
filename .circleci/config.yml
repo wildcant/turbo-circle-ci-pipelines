@@ -26,7 +26,7 @@ jobs:
       - checkout
       - run:
           name: Run script
-          command: <<include(scripts/changeset.sh)>>
+          command: ./.circleci/scripts/changeset.sh
 
 workflows:
   ci:
