@@ -10,16 +10,25 @@ jobs:
           name: Install packages
           command: yarn install
       - run:
+          name: 'Echo turbo dry json'
+          command: yarn diff
+      - run:
           name: Build
           command: yarn build
       - run:
           name: Run tests
           command: yarn test
+
+  playground:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
       - run:
-          name: 'Echo turbo dry json'
-          command: yarn diff
+          name: Run script
+          command: <<include(scripts/changeset.sh)>>
 
 workflows:
   ci:
     jobs:
-      - build-test
+      - playground
