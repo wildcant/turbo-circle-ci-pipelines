@@ -37,7 +37,11 @@ jobs:
     steps:
       - run:
           name: Set environment variable
-          command: export MY_VAR=new_value
+          command: export MY_VAR="new_value"
+
+      - run:
+          name: Echo env var
+          command: echo $MY_VAR
 
   job1:
     docker:
