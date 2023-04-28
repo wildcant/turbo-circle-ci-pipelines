@@ -31,30 +31,28 @@ jobs:
           name: Run script
           command: ./.circleci/scripts/turbo-changed.sh
 
-  conditional-job:
+  shared:
     docker:
-      - image: alpine
+      - image: cimg/node:17.1.0
     steps:
-      - run: echo "Running conditional job"
-
-  generate-output-job:
+      - run:
+          name: Set environment variable
+          command: echo "FOO=bar" >> $BASH_ENV
+  job1:
     docker:
-      - image: alpine
+      - image: cimg/node:17.1.0
     steps:
-      - run: echo "Some output" > output.txt
-      - store_artifacts:
-          path: output.txt
+      - run:
+          name: Use environment variable
+          command: echo $FOO
 
 workflows:
   # ci:
   #   jobs:
   #     - playground
-  generate-output:
+  my-workflow:
     jobs:
-      - generate-output-job
-  conditional-workflow:
-    when: << dependencies.generate-output.outputs.output-txt contains "Some output" >>
-    dependencies:
-      - generate-output
-    jobs:
-      - conditional-job
+      - shared
+      - job1:
+          requires:
+            - shared
