@@ -1,2 +1,2 @@
-packages="// admin blog storefront ui"
+packages="\"// admin blog storefront ui\""
 echo "export FOO=$packages"
